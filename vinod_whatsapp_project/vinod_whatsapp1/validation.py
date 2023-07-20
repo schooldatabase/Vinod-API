@@ -1,4 +1,6 @@
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
+
 
 def validate_call_status(value):
     valid_statuses = ['incoming', 'outgoing', 'answered', 'ended']
@@ -40,3 +42,30 @@ def validate_audio(value):
 def validate_document(value):
     validate_file_extension(['.pdf', '.txt'])(value)
     validate_file_size(5 * 1024 * 1024)(value)  # 5 MB
+    
+    
+# user validation some code
+def validate_language(value):
+    supported_languages = ['en', 'fr', 'es']
+    if value not in supported_languages:
+        raise ValidationError("Invalid language. Please select a supported language.")
+
+def validate_app_theme(value):
+    if value not in ['light', 'dark']:
+        raise ValidationError("Invalid app theme. Please select 'light' or 'dark'.")
+
+def validate_privacy_enabled(value):
+    if not isinstance(value, bool):
+        raise ValidationError("Invalid value for privacy_enabled. It should be a boolean.")
+
+def validate_sender_and_receiver(sender_id, receiver_id):
+    try:
+        sender = User.objects.get(pk=sender_id)
+        receiver = User.objects.get(pk=receiver_id)
+    except User.DoesNotExist:
+        raise ValidationError("Invalid sender or receiver ID. Please provide valid user IDs.")
+
+def validate_message_content_length(value):
+    max_length = 1000
+    if len(value) > max_length:
+        raise ValidationError(f"Message content should not exceed {max_length} characters.")

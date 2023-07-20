@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
 from django.db.models import Q
 from .models import *
 from .serializers import *
@@ -42,6 +44,15 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
+    
+class UserProfileViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return UserProfile.objects.filter(user=self.request.user)
+    
     
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
@@ -114,3 +125,7 @@ class VoiceCallViewSet(viewsets.ModelViewSet):
 class VideoCallViewSet(viewsets.ModelViewSet):
     queryset = VideoCall.objects.all()
     serializer_class = VideoCallSerializer
+    
+class NotificationSettingsViewSet(viewsets.ModelViewSet):
+    queryset = NotificationSettings.objects.all()
+    serializer_class = NotificationSettingsSerializer

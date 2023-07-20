@@ -2,11 +2,19 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import *
 from .validation import *
+
+
+        
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'profile_picture', 'bio')
-
+        
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+        
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
@@ -84,3 +92,8 @@ class VideoCallSerializer(serializers.ModelSerializer):
     class Meta:
         model = VideoCall
         fields = ('id', 'caller', 'receiver', 'initiated_at', 'call_status', 'call_encryption')
+        
+class NotificationSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NotificationSettings
+        fields = '__all__'

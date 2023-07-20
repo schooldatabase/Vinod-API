@@ -67,3 +67,19 @@ class ChatConsumer(JsonAsyncWebsocketConsumer):
             "message": message_content
         })
 
+
+    async def send_call_notification(self, event):
+        # Send call notification to the connected client
+        call_info = event['call_info']
+        await self.send_json({
+            'type': 'call_notification',
+            'call_info': call_info,
+        })
+
+    async def send_status_update_notification(self, event):
+        # Send status update notification to the connected client
+        status_update = event['status_update']
+        await self.send_json({
+            'type': 'status_update_notification',
+            'status_update': status_update,
+        })

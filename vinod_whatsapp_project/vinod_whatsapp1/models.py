@@ -11,19 +11,21 @@ class Contact(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contacts')
     contact_id = models.PositiveIntegerField()
 
+class Group(models.Model):
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_groups')
+    group_name = models.CharField(max_length=100)
+    participants = models.ManyToManyField(User, through='GroupParticipant')
+    
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='group_messages', null=True, blank=True)
     message_content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     is_delivered = models.BooleanField(default=False)
     is_read = models.BooleanField(default=False)
     encrypted_content = models.TextField(blank=True)
 
-class Group(models.Model):
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_groups')
-    group_name = models.CharField(max_length=100)
-    participants = models.ManyToManyField(User, through='GroupParticipant')
 
 class GroupParticipant(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)

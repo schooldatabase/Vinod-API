@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
@@ -42,18 +42,41 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
-
-class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializer
-
-    # Implement other actions for messaging as needed.
-
+    
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
     # Implement other actions for group management as needed.
+    
+class MessageViewSet(viewsets.ModelViewSet):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+
+    def create(self, request, *args, **kwargs):
+        # Add message delivery and read receipts logic
+        message_serializer = self.get_serializer(data=request.data)
+        message_serializer.is_valid(raise_exception=True)
+        self.perform_create(message_serializer)
+
+        # Update message delivery and read status
+        sender = request.user
+        receiver = message_serializer.validated_data['receiver']
+
+        # Set is_delivered to True for the sender
+        message_serializer.validated_data['is_delivered'] = True
+        self.perform_update(message_serializer)
+
+        # Send read receipt to the receiver
+        message_queryset = self.queryset.filter(sender=sender, receiver=receiver, is_read=False)
+        for message in message_queryset:
+            message.is_read = True
+            message.save()
+
+        headers = self.get_success_headers(message_serializer.data)
+        return Response(message_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    # Implement other actions for messaging as needed.
 
 class CallViewSet(viewsets.ModelViewSet):
     queryset = Call.objects.all()

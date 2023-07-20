@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -70,7 +71,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'vinod_whatsapp_project.wsgi.application'
-
+ASGI_APPLICATION = 'vinod_whatsapp_project.asgi.application'
+# ASGI_APPLICATION = 'vinod_whatsapp_project.routing.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -123,3 +125,21 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',  # For development
+        # 'BACKEND': 'channels_redis.core.RedisChannelLayer',  # For production (requires Redis server)
+        # 'CONFIG': {
+        #     'hosts': [('localhost', 6379)],
+        #     'hosts': [("127.0.0.1", 6379)],
+        # },
+    },
+}
+
+# WebSocket URL
+WEBSOCKET_URL = '/ws/'
+
+# Allow WebSocket for Authenticated Users Only
+AUTH_CHANNEL = 'authenticated'
+ALLOWED_USERS = ['websocket.connect']

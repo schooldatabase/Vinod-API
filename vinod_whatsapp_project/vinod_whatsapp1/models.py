@@ -1,16 +1,45 @@
+import re
 from django.db import models
 from django.contrib.auth.models import User
 from .validation import *
+from django.core.validators import RegexValidator, EmailValidator
+from django.utils.translation import gettext_lazy as _
+from datetime import timedelta
+from django.core.exceptions import ValidationError
+from django.db.models.signals import pre_save, pre_delete
+from django.dispatch import receiver
+
+
+
 # class User(AbstractUser):
 #     email = models.EmailField(unique=True)
 #     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True)
 #     bio = models.TextField(blank=True)
-
+APP_THEME_CHOICES = (
+        ('light', 'Light'),
+        ('dark', 'Dark'),
+        ('blue', 'Blue'),
+        ('green', 'Green'),
+        ('purple', 'Purple'),
+        ('custom', 'Custom'), 
+        # Add more themes as needed
+    )
+LANGUAGE_CHOICES = (
+        ('en', 'English'),
+        ('fr', 'French'),
+        ('es', 'Spanish'),
+        ('de', 'German'),
+        ('it', 'Italian'),
+        ('ja', 'Japanese'),
+        ('zh', 'Chinese'),
+        # Add more languages as needed
+    )
+ 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    language = models.CharField(max_length=50, default='en', validators=[validate_language])
+    language =models.CharField(max_length=2, choices=LANGUAGE_CHOICES, default='en')
     chat_wallpaper = models.ImageField(upload_to='chat_wallpapers/', null=True, blank=True)
-    app_theme = models.CharField(max_length=20, default='light', validators=[validate_app_theme])
+    app_theme = models.CharField(max_length=10, choices=APP_THEME_CHOICES, default='light')
     privacy_enabled = models.BooleanField(default=True, validators=[validate_privacy_enabled])
     
     # New Notification Fields
@@ -21,22 +50,47 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"User: {self.user.username}, Language: {self.language}, App Theme: {self.app_theme}"
 
-
+        
 class Contact(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contacts')
-    contact_id = models.PositiveIntegerField()
+    name = models.CharField(max_length=100, null=True,blank=True)
+    COUNTRY_CODE_CHOICES = (
+        ('+91', 'India'),
+        ('+1', 'United States'),
+        ('+44', 'United Kingdom'),
+        ('+33', 'France'),
+        ('+49', 'Germany'),
+        ('+34', 'Spain'),
+        # Add more countries and codes as needed
+    )
+    country_code = models.CharField(max_length=5, choices=COUNTRY_CODE_CHOICES, default='+91')
+    
+   # Define a regex validator specific to Indian phone numbers
+    india_phone_regex = RegexValidator(
+        regex=r'^\+91[1-9][0-9]{9}$',
+        message="Indian phone number must be in the format: '+91XXXXXXXXXX' (10 digits after the country code)."
+    )
+    phone_number = models.CharField(max_length=15, validators=[india_phone_regex], unique=True)   
+    email = models.EmailField(unique=True)
     
     def __str__(self):
-        return f"User: {self.user}, Contact ID: {self.contact_id}"
-
-
+        return f"User: {self.user}"
+        
 class Group(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_groups')
     group_name = models.CharField(max_length=100)
     participants = models.ManyToManyField(User, through='GroupParticipant')
+
     
     def __str__(self):
         return self.group_name
+    
+class GroupParticipant(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    participant = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"group: {self.group}, participant: {self.participant}"
     
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
@@ -54,13 +108,6 @@ class Message(models.Model):
 
 
 
-class GroupParticipant(models.Model):
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    participant = models.ForeignKey(User, on_delete=models.CASCADE)
-    is_admin = models.BooleanField(default=False)
-    
-    def __str__(self):
-        return f"Group: {self.group}, Participant: {self.participant}, Admin: {self.is_admin}"
 
 class Call(models.Model):
     caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='outgoing_calls')
@@ -84,7 +131,7 @@ class GroupChat(models.Model):
 # Add other models as needed (e.g., Photo, Video, Audio, Document, etc.) for media sharing.
 class Image(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image_file = models.ImageField(upload_to='images/%Y/%m/%d/')
+    image_file = models.ImageField(upload_to='images/', validators=[validate_image_extension, validate_image_size])
     timestamp = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -93,15 +140,15 @@ class Image(models.Model):
 
 class Video(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    video_file = models.FileField(upload_to='videos/%Y/%m/%d/')
+    video_file = models.FileField(upload_to='videos/', validators=[validate_video_extension, validate_video_size])
     timestamp = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"User: {self.user}, Video: {self.video_file}"
-
+    
 class Audio(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    audio_file = models.FileField(upload_to='audios/%Y/%m/%d/')
+    audio_file = models.FileField(upload_to='audio/', validators=[validate_audio_extension, validate_audio_size])
     timestamp = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -109,7 +156,7 @@ class Audio(models.Model):
 
 class Document(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    document_file = models.FileField(upload_to='documents/%Y/%m/%d/')
+    document_file = models.FileField(upload_to='documents/', validators=[validate_document_extension, validate_document_size])
     timestamp = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

@@ -1,17 +1,23 @@
 from django.contrib import admin
-from .models import Contact, Group, Message, GroupParticipant, Call, GroupChat, VoiceCall, VideoCall, Image, Video, Audio, Document
+from .models import UserProfile, Contact, Group, Message, GroupParticipant, Call, GroupChat, VoiceCall, VideoCall, Image, Video, Audio, Document
 
 # Register models to make them accessible in the Django admin interface
-
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'privacy_enabled')
+    list_filter = ('user',)
+    search_fields = ('user__username',)
+    
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
-    list_display = ('user', 'contact_id')
+    # list_display = ('user','name', 'country_code', 'phone_number', 'email')
+    list_display = ('user','name', 'country_code', 'phone_number')
     list_filter = ('user',)
-    search_fields = ('user__username', 'contact_id')
+    search_fields = ('user__username',)
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ('group_name', 'creator')
+    list_display = ('group_name', 'creator', )
     list_filter = ('creator',)
     search_fields = ('group_name', 'creator__username')
 
@@ -23,8 +29,8 @@ class MessageAdmin(admin.ModelAdmin):
 
 @admin.register(GroupParticipant)
 class GroupParticipantAdmin(admin.ModelAdmin):
-    list_display = ('group', 'participant', 'is_admin')
-    list_filter = ('group', 'participant', 'is_admin')
+    list_display = ('group', 'participant',)
+    list_filter = ('group', 'participant',)
     search_fields = ('group__group_name', 'participant__username')
 
 @admin.register(Call)

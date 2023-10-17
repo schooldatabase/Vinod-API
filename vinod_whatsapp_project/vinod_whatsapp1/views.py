@@ -11,39 +11,39 @@ from .serializers import *
 # from .serializers import UserSerializer, MessageSerializer, GroupSerializer, GroupParticipantSerializer, CallSerializer, GroupChatSerializer, VoiceCallSerializer, VideoCallSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+# class UserViewSet(viewsets.ModelViewSet):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
 
-    @action(detail=False, methods=['post'])
-    def register(self, request):
-        # Example implementation for user registration
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+#     @action(detail=False, methods=['post'])
+#     def register(self, request):
+#         # Example implementation for user registration
+#         serializer = UserSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=201)
+#         return Response(serializer.errors, status=400)
 
-    @action(detail=False, methods=['post'])
-    def login(self, request):
-        # Example implementation for user login
-        username_email = request.data.get('username_email')
-        password = request.data.get('password')
-        user = User.objects.filter(Q(username=username_email) | Q(email=username_email)).first()
-        if user and user.check_password(password):
-            # Perform successful login actions (e.g., create a token, return user data, etc.)
-            return Response({'message': 'Login successful!'})
-        return Response({'message': 'Invalid credentials'}, status=401)
+#     @action(detail=False, methods=['post'])
+#     def login(self, request):
+#         # Example implementation for user login
+#         username_email = request.data.get('username_email')
+#         password = request.data.get('password')
+#         user = User.objects.filter(Q(username=username_email) | Q(email=username_email)).first()
+#         if user and user.check_password(password):
+#             # Perform successful login actions (e.g., create a token, return user data, etc.)
+#             return Response({'message': 'Login successful!'})
+#         return Response({'message': 'Invalid credentials'}, status=401)
 
-    @action(detail=True, methods=['patch'])
-    def profile(self, request, pk=None):
-        # Example implementation for user profile management
-        user = self.get_object()
-        serializer = UserSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+#     @action(detail=True, methods=['patch'])
+#     def profile(self, request, pk=None):
+#         # Example implementation for user profile management
+#         user = self.get_object()
+#         serializer = UserSerializer(user, data=request.data, partial=True)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=400)
     
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
@@ -53,12 +53,33 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return UserProfile.objects.filter(user=self.request.user)
     
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
     
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+    
+class GroupParticipantViewSet(viewsets.ModelViewSet):
+    queryset = GroupParticipant.objects.all()
+    serializer_class = GroupParticipantSerializer
+    
+    # @action(detail=True, methods=['post'])
+    # def add_participant(self, request, pk=None):
+    #     # Add a participant to a group
+    #     group_participant = self.get_object()
+    #     user = request.user  # Assuming you're using authentication
+    #     group_participant.group.participants.add(user)
+    #     return Response(status=status.HTTP_201_CREATED)
 
-    # Implement other actions for group management as needed.
+    # @action(detail=True, methods=['post'])
+    # def remove_participant(self, request, pk=None):
+    #     # Remove a participant from a group
+    #     group_participant = self.get_object()
+    #     user = request.user  # Assuming you're using authentication
+    #     group_participant.group.participants.remove(user)
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
     
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()

@@ -3,6 +3,130 @@
 # from channels.layers import get_channel_layer
 # import json
 
+from django.db import models
+from django.db.models.signals import post_save, pre_save, pre_delete, post_delete
+from django.dispatch import receiver
+
+from .models import *
+
+
+@receiver(post_save, sender=Group)
+def group_created(sender, instance, created, **kwargs):
+    if created:
+        pass
+        # Handle actions when a new group is created
+        # For example, you can send notifications to participants or update statistics
+
+        # Replace this with your actual logic
+        # Example: Sending notifications
+        # participants = instance.participants.all()
+        # for participant in participants:
+        #     send_notification(participant, f'You have been added to the group: {instance.group_name}')
+
+
+
+@receiver(post_save, sender=GroupParticipant)
+def participant_added(sender, instance, created, **kwargs):
+    if created:
+        # Handle actions when a participant is added to a group
+        # For example, you can update the group's member count
+
+        # Replace this with your actual logic
+        group = instance.group
+        group.participants_count = group.groupparticipant_set.count()
+        group.save()
+
+
+
+@receiver(pre_delete, sender=GroupParticipant)
+def participant_removed(sender, instance, **kwargs):
+    # Handle actions when a participant is removed from a group
+    # For example, you can update the group's member count
+
+    # Replace this with your actual logic
+    group = instance.group
+    group.participants_count = group.groupparticipant_set.count() - 1  # Decrease count
+    group.save()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# @receiver(pre_save, sender=GroupParticipant)
+# def remove_duplicate_participants(sender, instance, **kwargs):
+#     group = instance.group
+#     participant = instance.participant
+
+#     # Check if the participant is already in the group
+#     existing_participants = GroupParticipant.objects.filter(group=group, participant=participant)
+
+#     if existing_participants.count() > 1:
+#         # If there are duplicate entries, remove the duplicates
+#         duplicate_entries = existing_participants.exclude(pk=instance.pk)
+#         duplicate_entries.delete()
+        
+
+# @receiver(post_delete, sender=GroupParticipant)
+# def remove_duplicate_participants(sender, instance, **kwargs):
+#     group = instance.group
+#     participant = instance.participant
+
+#     # Check if the participant is already in the group
+#     existing_participants = GroupParticipant.objects.filter(group=group, participant=participant)
+
+#     if existing_participants.count() > 1:
+#         # If there are duplicate entries, remove the duplicates
+#         duplicate_entries = existing_participants.exclude(pk=instance.pk)
+#         duplicate_entries.delete()  
+# ##############  group       #######################
+# # Signal handler for when a new save is added
+# # @receiver(post_save, sender=Group)
+# # def update_group_save_count_on_save(sender, instance, created, **kwargs):
+# #     if created:
+#         # Handle the case when a new save is added to the group
+#         instance.group.participants += 1
+#         instance.save()
+
+# # Signal handler for when a save is removed
+# @receiver(post_delete, sender=Group)
+# def update_group_save_count_on_delete(sender, instance, **kwargs):
+#     # Handle the case when a save is removed from the group
+#     if instance.group.participants > 0:
+#         instance.group.participants -= 1
+#         instance.save()
+
+##############   group      #######################
+
+# # Signal handler for adding a save
+# @receiver(post_save, sender=Contact)
+# def update_contact_save_count_on_save(sender, instance, **kwargs):
+#     # Increment the save_count when a new save is added
+#     if instance.email:
+#         instance.email.save_count += 1
+#         instance.email.save()
+
+# # Signal handler for removing a save
+# @receiver(post_delete, sender=Contact)
+# def update_contact_save_count_on_delete(sender, instance, **kwargs):
+#     # Decrement the save_count when a save is removed
+#     if instance.email:
+#         instance.email.save_count -= 1
+#         instance.email.save()
+
 # notification implatmation 
 
 # @receiver(post_save, sender=MessageNotification)

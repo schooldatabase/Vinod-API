@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.contrib.staticfiles.middleware.StaticFilesMiddleware', # add
 ]
 
 ROOT_URLCONF = 'vinod_whatsapp_project.urls'
@@ -71,9 +72,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'vinod_whatsapp_project.wsgi.application'
+# ASGI_APPLICATION = "vinod_whatsapp_project.asgi.application"
 ASGI_APPLICATION = 'vinod_whatsapp_project.asgi.application'
-# ASGI_APPLICATION = 'vinod_whatsapp_project.routing.application'
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -150,13 +151,25 @@ CHANNEL_LAYERS = {
     },
 }
 
-# WebSocket URL
-WEBSOCKET_URL = '/ws/'
+# # WebSocket URL
+# WEBSOCKET_URL = '/ws/'
 
-# Allow WebSocket for Authenticated Users Only
-AUTH_CHANNEL = 'authenticated'
-ALLOWED_USERS = ['websocket.connect']
+# # Allow WebSocket for Authenticated Users Only
+# AUTH_CHANNEL = 'authenticated'
+# ALLOWED_USERS = ['websocket.connect']
+
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# installed python moduls (requirements.txt)
+# Django
+# google-auth
+# gunicorn
+# Channels
+# Daphne
+# channels_redis
+# pyzmq

@@ -92,6 +92,16 @@ class GroupParticipant(models.Model):
     def __str__(self):
         return f"group: {self.group}, participant: {self.participant}"
     
+class GroupChat(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='group_chats')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='group_messages')
+    message_content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    encrypted_content = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f"Group: {self.group}, Sender: {self.sender}, Content: {self.message_content[:20]}..."
+    
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
@@ -107,8 +117,6 @@ class Message(models.Model):
         return f"Sender: {self.sender}, Receiver: {self.receiver}, Content: {self.message_content[:20]}..."
 
 
-
-
 class Call(models.Model):
     caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='outgoing_calls')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='incoming_calls')
@@ -118,15 +126,6 @@ class Call(models.Model):
     def __str__(self):
         return f"Caller: {self.caller}, Receiver: {self.receiver}, Status: {self.call_status}"
 
-class GroupChat(models.Model):
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='group_chats')
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='group_messages')
-    message_content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    encrypted_content = models.TextField(blank=True)
-    
-    def __str__(self):
-        return f"Group: {self.group}, Sender: {self.sender}, Content: {self.message_content[:20]}..."
 
 # Add other models as needed (e.g., Photo, Video, Audio, Document, etc.) for media sharing.
 class Image(models.Model):
@@ -161,6 +160,20 @@ class Document(models.Model):
     
     def __str__(self):
         return f"User: {self.user}, Document: {self.document_file}"
+
+class Status(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='statuses')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+# class Call(models.Model):
+#     caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='outgoing_calls')
+#     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='incoming_calls')
+#     call_type = models.CharField(max_length=10)  # 'audio' or 'video'
+#     start_time = models.DateTimeField()
+#     end_time = models.DateTimeField()
+#     is_answered = models.BooleanField(default=False)
 
 
 # Voice and Video Calls

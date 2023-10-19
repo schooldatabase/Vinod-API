@@ -8,9 +8,9 @@ router.register(r'user-settings', UserProfileViewSet) # true
 router.register(r'contact', ContactViewSet) # true
 router.register(r'groups', GroupViewSet)
 router.register(r'gparticipant', GroupParticipantViewSet)
+router.register(r'group-chats', GroupChatViewSet)
 router.register(r'messages', MessageViewSet)
 router.register(r'calls', CallViewSet)
-router.register(r'group-chats', GroupChatViewSet)
 
 router.register(r'image', PhotoViewSet) # true
 router.register(r'videos', VideoViewSet) # true

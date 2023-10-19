@@ -10,10 +10,25 @@ from django.dispatch import receiver
 from .models import *
 
 
-@receiver(post_save, sender=Group)
-def group_created(sender, instance, created, **kwargs):
-    if created:
-        pass
+# @receiver(post_save, sender=Group)
+# def group_created(sender, instance, created, **kwargs):
+    
+    
+    # group = instance.creator
+    # participants = instance.participants
+
+    # # Check if the participant is already in the group
+    
+        
+    # if created:
+        
+    #     existing_participants = Group.objects.filter(creator=instance.creator, participant=instance.participants)
+
+    # if existing_participants.count() > 1:
+    #     # If there are duplicate entries, remove the duplicates
+    #     duplicate_entries = existing_participants.exclude(pk=instance.pk)
+    #     GroupParticipant(duplicate_entries.delete())
+        # pass
         # Handle actions when a new group is created
         # For example, you can send notifications to participants or update statistics
 
@@ -22,64 +37,108 @@ def group_created(sender, instance, created, **kwargs):
         # participants = instance.participants.all()
         # for participant in participants:
         #     send_notification(participant, f'You have been added to the group: {instance.group_name}')
-
-
-
-@receiver(post_save, sender=GroupParticipant)
-def participant_added(sender, instance, created, **kwargs):
-    if created:
-        # Handle actions when a participant is added to a group
-        # For example, you can update the group's member count
-
-        # Replace this with your actual logic
-        group = instance.group
-        group.participants_count = group.groupparticipant_set.count()
-        group.save()
-
-
-
-@receiver(pre_delete, sender=GroupParticipant)
-def participant_removed(sender, instance, **kwargs):
-    # Handle actions when a participant is removed from a group
-    # For example, you can update the group's member count
-
-    # Replace this with your actual logic
-    group = instance.group
-    group.participants_count = group.groupparticipant_set.count() - 1  # Decrease count
-    group.save()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# @receiver(pre_save, sender=GroupParticipant)
-# def remove_duplicate_participants(sender, instance, **kwargs):
-#     group = instance.group
-#     participant = instance.participant
-
-#     # Check if the participant is already in the group
-#     existing_participants = GroupParticipant.objects.filter(group=group, participant=participant)
-
-#     if existing_participants.count() > 1:
-#         # If there are duplicate entries, remove the duplicates
-#         duplicate_entries = existing_participants.exclude(pk=instance.pk)
-#         duplicate_entries.delete()
         
 
+
+# @receiver(post_save, sender=GroupParticipant)
+# def participant_added(sender, instance, created, **kwargs):
+#     pass
+#     # if created:
+#     #     # Handle actions when a participant is added to a group
+#     #     # For example, you can update the group's member count
+
+#     #     # Replace this with your actual logic
+#         # group = instance.group
+#         # participant = instance.participant
+    
+#     #     group.participants_count = group.groupparticipant_set.count()
+#     #     group.save()
+
+
+
+# @receiver(pre_delete, sender=GroupParticipant)
+# def participant_removed(sender, instance, **kwargs):
+#     pass
+#     # Handle actions when a participant is removed from a group
+#     # For example, you can update the group's member count
+
+#     # Replace this with your actual logic
+#     # group = instance.group
+#     # group.participants_count = group.groupparticipant_set.count() - 1  # Decrease count
+#     # group.save()
+
+
+
+
+# Signal handler for when a new save is added
+# @receiver(post_save, sender=Group)
+# def update_group_save_count_on_save(sender, instance, created, **kwargs):
+#     print("----------------------------------------------------")
+#     print("==== instance =", instance.__dict__)
+#     print("----------------------------------------------------")
+#     print("==== sender =", sender)
+#     print("----------------------------------------------------")
+#     print("==== createrd =", created)
+#     print("----------------------------------------------------")
+#     print("==== instance kwargs =", *kwargs)
+    
+    # if created:
+    #     # Handle the case when a new save is added to the group
+    #     instance.group.participants += 1
+    #     instance.save()
+
+# Signal handler for when a save is removed
+# @receiver(post_delete, sender=Group)
+# def update_group_save_count_on_delete(sender, instance, **kwargs):
+#     # Handle the case when a save is removed from the group
+#     if instance.group.GroupParticipant > 1:
+#         instance.group.GroupParticipant -= 1
+#         instance.save()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@receiver(pre_delete, sender=Group)
+def remove_duplicate_participants(sender, instance, **kwargs):
+    group = instance.group
+    participant = instance.participant
+
+    # Check if the participant is already in the group
+    existing_participants = GroupParticipant.objects.filter(group=instance.group, participant=instance.participant)
+
+    # if existing_participants.exists():
+        # If there are duplicate entries, remove the duplicates
+    print("pre ----------------------",existing_participants)
+    existing_participants.delete()
+        # duplicate_entries = existing_participants.exclude(pk=instance.participant)
+        # duplicate_entries.delete()
+        
+@receiver(post_delete, sender=Group)
+def remove_duplicate_participants(sender, instance, **kwargs):
+    # group = instance.group
+    # participant = instance.participant
+    
+    # Check if the participant is already in the group
+    existing_participants = GroupParticipant.objects.filter(group=instance.group, participant=instance.participant)
+
+    if existing_participants.exists():
+        # If there are duplicate entries, remove the duplicates
+
+        print("post ---------------------------",existing_participants.__dir__)
+        # duplicate_entries = existing_participants.exclude(pk=instance.participant)
+        # duplicate_entries.delete()
+        
 # @receiver(post_delete, sender=GroupParticipant)
 # def remove_duplicate_participants(sender, instance, **kwargs):
 #     group = instance.group

@@ -17,6 +17,7 @@ router.register(r'videos', VideoViewSet) # true
 router.register(r'audios', AudioViewSet) # true
 router.register(r'documents', DocumentViewSet) # true
 
+router.register(r'status', StatusViewSet) # true
 router.register(r'voice-calls', VoiceCallViewSet)
 router.register(r'video-calls', VideoCallViewSet)
 router.register(r'notification-settings', NotificationSettingsViewSet)

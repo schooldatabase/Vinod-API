@@ -76,6 +76,12 @@ class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
         fields = ['user', 'document_file', 'timestamp']
+
+
+class StatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Status
+        fields = '__all__'
         
         
 class VoiceCallSerializer(serializers.ModelSerializer):

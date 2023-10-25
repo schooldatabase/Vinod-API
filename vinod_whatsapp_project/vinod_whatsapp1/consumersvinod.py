@@ -4,6 +4,59 @@
 # from channels.generic.websocket import JsonAsyncWebsocketConsumer
 # from .models import Message
 
+##################################################################################
+######################################## you can try first time websocket connnection ##########################################
+
+
+# import json
+# from asgiref.sync import async_to_sync
+# from channels.generic.websocket import JsonWebsocketConsumer
+# # from .models import *
+# from django.contrib.auth import get_user_model
+
+
+# class StatusConsumer(JsonWebsocketConsumer):
+#     def connect(self):
+#         print("websocket connnection -----------------")
+#         self.accept()
+#         print("websocket connnection -----------------")
+
+#     def disconnect(self, close_code):
+#         print("websocket connnection -----------------", close_code)
+        
+        
+
+#     def receive_json(self, content, **kwargs):
+        
+#         print("reverser connnection -----------------", content)
+#         self.send_json({'message':"message form server to client"})
+
+
+
+
+
+
+
+
+
+##################################################################################
+##################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # class ChatConsumer(JsonAsyncWebsocketConsumer):
 #     async def connect(self):
@@ -270,7 +323,7 @@
    
 
 # class VideoCall(models.Model):
-#   video_caller = models.ForeignKey(Call, on_delete=models.CASCADE, related_name='voice_calls_made')
+#   video_caller = models.ForeignKey(Call, on_delete=models.CASCADE, related_name='video_calls_made')
 #     initiated_at = models.DateTimeField(auto_now_add=True)
 #     call_status = models.CharField(max_length=20, choices=[('incoming', 'Incoming'), ('outgoing', 'Outgoing'), ('answered', 'Answered'), ('ended', 'Ended')])
     
@@ -323,6 +376,7 @@
 #                 call_status='outgoing',  # Adjust the call status based on your logic
 #             )
 #             voice_call.save()
+
 #         elif call_type == 'video':
 #             # Handle video call
 #             call = Call(

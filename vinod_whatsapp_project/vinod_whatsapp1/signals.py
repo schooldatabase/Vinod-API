@@ -115,7 +115,7 @@ def remove_duplicate_participants(sender, instance, **kwargs):
     participant = instance.participant
 
     # Check if the participant is already in the group
-    existing_participants = GroupParticipant.objects.filter(group=instance.group, participant=instance.participant)
+    existing_participants = Group.objects.filter(group=instance.group, participant=instance.participant)
 
     # if existing_participants.exists():
         # If there are duplicate entries, remove the duplicates
@@ -130,7 +130,7 @@ def remove_duplicate_participants(sender, instance, **kwargs):
     # participant = instance.participant
     
     # Check if the participant is already in the group
-    existing_participants = GroupParticipant.objects.filter(group=instance.group, participant=instance.participant)
+    existing_participants = Group.objects.filter(group=instance.group, participant=instance.participant)
 
     if existing_participants.exists():
         # If there are duplicate entries, remove the duplicates

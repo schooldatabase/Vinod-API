@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserProfile, Contact, Group, Message, GroupParticipant, Call, GroupChat, VoiceCall, VideoCall, Image, Video, Audio, Document
+from .models import UserProfile, Contact, Group, Message, GroupParticipant, Call, GroupChat, VoiceCall, VideoCall, Image, Video, Audio, Document, Status
 
 # Register models to make them accessible in the Django admin interface
 @admin.register(UserProfile)
@@ -70,6 +70,11 @@ class DocumentAdmin(admin.ModelAdmin):
     list_filter = ('user', 'timestamp')
     search_fields = ('user__username', 'document_file')
 
+@admin.register(Status)
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'content')
+  
+    
 @admin.register(VoiceCall)
 class VoiceCallAdmin(admin.ModelAdmin):
     list_display = ('caller', 'receiver', 'initiated_at', 'call_status')

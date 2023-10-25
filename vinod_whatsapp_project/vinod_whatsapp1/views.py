@@ -138,10 +138,14 @@ class AudioViewSet(viewsets.ModelViewSet):
 class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
-
+    
 class VoiceCallViewSet(viewsets.ModelViewSet):
     queryset = VoiceCall.objects.all()
     serializer_class = VoiceCallSerializer
+
+class StatusViewSet(viewsets.ModelViewSet):
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
 
 class VideoCallViewSet(viewsets.ModelViewSet):
     queryset = VideoCall.objects.all()

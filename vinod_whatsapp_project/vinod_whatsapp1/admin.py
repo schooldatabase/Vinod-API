@@ -35,9 +35,9 @@ class GroupParticipantAdmin(admin.ModelAdmin):
 
 @admin.register(Call)
 class CallAdmin(admin.ModelAdmin):
-    list_display = ('caller', 'receiver', 'timestamp', 'call_status')
-    list_filter = ('caller', 'receiver', 'timestamp', 'call_status')
-    search_fields = ('caller__username', 'receiver__username', 'call_status')
+    list_display = ('caller', 'receiver')
+    list_filter = ('caller', 'receiver')
+    # search_fields = ('caller__username')
 
 @admin.register(GroupChat)
 class GroupChatAdmin(admin.ModelAdmin):
@@ -77,12 +77,12 @@ class DocumentAdmin(admin.ModelAdmin):
     
 @admin.register(VoiceCall)
 class VoiceCallAdmin(admin.ModelAdmin):
-    list_display = ('caller', 'receiver', 'initiated_at', 'call_status')
-    list_filter = ('caller', 'receiver', 'initiated_at', 'call_status')
-    search_fields = ('caller__username', 'receiver__username', 'call_status')
+    list_display = ('initiated_at', 'call_status')
+    list_filter = ('initiated_at', 'call_status')
+    # search_fields = ('receiver__username', 'call_status')
 
 @admin.register(VideoCall)
 class VideoCallAdmin(admin.ModelAdmin):
-    list_display = ('caller', 'receiver', 'initiated_at', 'call_status')
-    list_filter = ('caller', 'receiver', 'initiated_at', 'call_status')
-    search_fields = ('caller__username', 'receiver__username', 'call_status')
+    list_display = ('initiated_at', 'call_status')
+    list_filter = ('initiated_at', 'call_status')
+    # search_fields = ('receiver__username', 'call_status')

@@ -117,14 +117,14 @@ class Message(models.Model):
         return f"Sender: {self.sender}, Receiver: {self.receiver}, Content: {self.message_content[:20]}..."
 
 
-class Call(models.Model):
-    caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='outgoing_calls')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='incoming_calls')
-    timestamp = models.DateTimeField(auto_now_add=True)
-    call_status = models.CharField(max_length=10)
+# class Call(models.Model):
+#     caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='outgoing_calls')
+#     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='incoming_calls')
+#     timestamp = models.DateTimeField(auto_now_add=True)
+#     call_status = models.CharField(max_length=10)
     
-    def __str__(self):
-        return f"Caller: {self.caller}, Receiver: {self.receiver}, Status: {self.call_status}"
+#     def __str__(self):
+#         return f"Caller: {self.caller}, Receiver: {self.receiver}, Status: {self.call_status}"
 
 
 # Add other models as needed (e.g., Photo, Video, Audio, Document, etc.) for media sharing.
@@ -167,19 +167,18 @@ class Status(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
 
-# class Call(models.Model):
-#     caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='outgoing_calls')
-#     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='incoming_calls')
-#     call_type = models.CharField(max_length=10)  # 'audio' or 'video'
-#     start_time = models.DateTimeField()
-#     end_time = models.DateTimeField()
-#     is_answered = models.BooleanField(default=False)
+class Call(models.Model):
+    caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='outgoing_calls')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='incoming_calls')
+    call_type = models.CharField(max_length=10)  # 'audio' or 'video'
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    is_answered = models.BooleanField(default=False)
 
 
 # Voice and Video Calls
 class VoiceCall(models.Model):
-    caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='voice_calls_made')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='voice_calls_received')
+    voice_caller = models.ForeignKey(Call, on_delete=models.CASCADE, related_name='voice_calls_made')
     initiated_at = models.DateTimeField(auto_now_add=True)
     call_status = models.CharField(max_length=20, choices=[('incoming', 'Incoming'), ('outgoing', 'Outgoing'), ('answered', 'Answered'), ('ended', 'Ended')])
     
@@ -187,8 +186,7 @@ class VoiceCall(models.Model):
         return f"Caller: {self.caller}, Receiver: {self.receiver}, Status: {self.call_status}"
 
 class VideoCall(models.Model):
-    caller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='video_calls_made')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='video_calls_received')
+    video_caller = models.ForeignKey(Call, on_delete=models.CASCADE, related_name='video_calls_made')
     initiated_at = models.DateTimeField(auto_now_add=True)
     call_status = models.CharField(max_length=20, choices=[('incoming', 'Incoming'), ('outgoing', 'Outgoing'), ('answered', 'Answered'), ('ended', 'Ended')])
     
@@ -206,3 +204,88 @@ class NotificationSettings(models.Model):
     quiet_hours_end = models.TimeField(blank=True, null=True)
     notification_sound = models.CharField(max_length=100, blank=True, null=True)
     notification_vibration = models.BooleanField(default=True)
+    
+############### recent history ################
+    
+ 
+class StatusRecent(models.Model):
+    status = models.ForeignKey(Status, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    viewed_at = models.DateTimeField(auto_now=True)
+ 
+class CallRecent(models.Model):
+    call = models.ForeignKey(Call, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    viewed_at = models.DateTimeField(auto_now=True)  
+    
+    
+############### recent history ################
+
+############### history ################
+
+class ContactHistory(models.Model):
+    history = models.TextField(default="{}")
+    
+class GroupHistory(models.Model):
+    history = models.TextField(default="{}")
+    
+class GroupParticipantHistory(models.Model):
+    history = models.TextField(default="{}")
+    
+class GroupChatHistory(models.Model):
+    history = models.TextField(default="{}")
+    
+class  MessageHistory(models.Model):
+    history = models.TextField(default="{}")
+    
+class CallStatusHistory(models.Model):
+    history = models.TextField(default="{}")
+    
+class VoiceCallHistory(models.Model):
+    history = models.TextField(default="{}")
+    
+class VideoCallHistory(models.Model):
+    history = models.TextField(default="{}")
+    
+class NotificationHistory(models.Model):
+    history = models.TextField(default="{}")
+    
+    
+############### history ################
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

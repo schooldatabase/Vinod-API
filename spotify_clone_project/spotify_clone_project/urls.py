@@ -1,5 +1,5 @@
 """
-URL configuration for vinod_whatsapp_project project.
+URL configuration for spotify_clone_project project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -21,8 +21,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('vinod_whatsapp1.urls')),
-    path('api/user/', include('account.urls')),
+    path('api/accounts/', include('account.urls')),
+    path('', include('myapp.urls'))
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

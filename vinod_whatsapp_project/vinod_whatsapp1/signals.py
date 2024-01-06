@@ -4,9 +4,9 @@
 # import json
 
 from django.db import models
-from django.db.models.signals import post_save, pre_save, pre_delete, post_delete
+from django.db.models.signals import post_save, pre_save, pre_delete, post_delete, m2m_changed
 from django.dispatch import receiver
-
+from django.contrib.auth.models import User
 from .models import *
 
 
@@ -138,6 +138,101 @@ def remove_duplicate_participants(sender, instance, **kwargs):
         print("post ---------------------------",existing_participants.__dir__)
         # duplicate_entries = existing_participants.exclude(pk=instance.participant)
         # duplicate_entries.delete()
+        
+        
+
+
+
+  
+
+  
+          
+###############################################################################    
+##################################     status recent  of data             #############################################    
+        
+        
+@receiver(m2m_changed, sender=Status.StatusRecent.through)
+def status_viewers_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
+    if action == "post_add":
+        for user_id in pk_set:
+            viewer = User.objects.get(pk=user_id)
+            print(f"Status '{instance.text}' viewed by user: {viewer.username}")
+    elif action == "post_remove":
+        for user_id in pk_set:
+            unviewer = User.objects.get(pk=user_id)
+            print(f"Status '{instance.text}' unviewed by user: {unviewer.username}")        
+
+        
+        
+        
+        
+##################################     status recent of data             #############################################       
+###############################################################################    
+        
+ ###############################################################################    
+##################################     call recent  of data             #############################################    
+        
+        
+@receiver(m2m_changed, sender=Call.CallRecent.through)
+def call_viewers_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
+    if action == "post_add":
+        for user_id in pk_set:
+            viewer = User.objects.get(pk=user_id)
+            print(f"Call from '{instance.caller.username}' viewed by user: {viewer.username}")
+    elif action == "post_remove":
+        for user_id in pk_set:
+            unviewer = User.objects.get(pk=user_id)
+            print(f"Call from '{instance.caller.username}' unviewed by user: {unviewer.username}")       
+
+        
+        
+        
+        
+##################################     call recent of data             #############################################       
+###############################################################################          
+        
+        
+        
+        
+###############################################################################    
+##################################     history of data             #############################################    
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+##################################     history of data             #############################################       
+###############################################################################    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
 # @receiver(post_delete, sender=GroupParticipant)
 # def remove_duplicate_participants(sender, instance, **kwargs):

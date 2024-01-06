@@ -44,7 +44,7 @@ class CallSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Call
-        fields = ('id', 'caller', 'receiver', 'timestamp', 'call_status')
+        fields = '__all__'
 
 class GroupChatSerializer(serializers.ModelSerializer):
     
@@ -90,7 +90,8 @@ class VoiceCallSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VoiceCall
-        fields = ('id', 'caller', 'receiver', 'initiated_at', 'call_status', 'call_encryption')
+        fields = '__all__'
+        # fields = ('id', 'caller', 'receiver', 'initiated_at', 'call_status', 'call_encryption')
 
 class VideoCallSerializer(serializers.ModelSerializer):
     # call_status = serializers.CharField(validators=[validate_call_status])
@@ -98,7 +99,8 @@ class VideoCallSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VideoCall
-        fields = ('id', 'caller', 'receiver', 'initiated_at', 'call_status', 'call_encryption')
+        fields = '__all__'
+        # fields = ('id', 'caller', 'receiver', 'initiated_at', 'call_status', 'call_encryption')
         
 class NotificationSettingsSerializer(serializers.ModelSerializer):
     class Meta:
